@@ -1,0 +1,1122 @@
+ 
+  xxxxx大学 
+计算机科学与工程学院  微机原理与汇编语言 
+课程设计报告  
+ 
+ 
+设计题目   LCD滚动显示数字与汉字    姓    名        xxx            
+ 
+学    号      xxxxx         专业班级    xxxxx        系所中心    xxxxxx      
+ 
+指导老师      xxx            起讫时间  xx年x月x日-x月x日  
+ 
+      设计地点      xxxxx        x年x月x日 
+  
+ 摘   要  使用唐都科教仪器的128×64图形点阵液晶编写实验程序通过8255控
+制液晶显示“学校、学院、学号、姓名”并独立这是控制按钮控制字幕左
+右上下滚动。  
+ 
+ 
+【关键词】 唐都 LCD点阵液晶8255  1 目 录  
+第一章  课程设计 .................................................................................... 2 1.1 目的和任务 ...................................................................................................................... 2 
+1.2 设计环境、设备与器材 .................................................................................................. 3 第二章  设计内容和方案 ........................................................................ 3 2.1 设计内容 .......................................................................................................................... 3 2.2 设计方案 .......................................................................................................................... 3 第三章  课程设计相关原理简述 ............................................................ 4 
+第四章  设计实现 .................................................................................... 9 4.1 系统设计框架结构 .......................................................................................................... 9 
+4.2 系统硬件设计 .................................................................................................................. 9 
+4.3 系统软件设计 .................................................................................................................. 9 
+4.4 遇到的问题及解决 ........................................................................................................ 12 
+4.5 需要讨论的其它问题 .................................................................................................... 12 第五章  设计验证 .................................................................................. 13 5.1 验证步骤及结果 ............................................................................................................ 13 
+5.2 数据分析 ........................................................................................................................ 13 
+5.3 结论 ................................................................................................................................ 13 第六章  设计总结 .................................................................................. 14 
+第七章  本课程教学建议 ...................................................................... 14 
+第八章  参考文献 .................................................................................. 17  
+ 
+ 
+ 
+ 
+ 
+ 
+   2  
+第一章  课程设计 1.1 目的和任务 
+目的 当今时候是一个信息化的时代信息的重要性不言而喻的获取手段显得
+尤其重要。人们所接受的信息有70%来自于人的视觉无论用何种方式获取的信
+息最终需要有某种显示方式来表示。在当代显示技术中主流的有LED显示屏
+和LCD液晶显示而在这些显示技术中尤其以液晶显示器LCD
+Liquid crystal display为代表的平板显示器发展最快应用最广。LCD是
+典型的发光器件它一材料科学为基础综合利用了精密机械光电及计算机
+技术并正在微机械微光学纤维光学等前沿领域研究基础上向高集成化
+智能化方向发展。  
+液晶显示技术发展迅猛市场预测表明液晶显示平均年销售呈增长
+10%~13%不久的将来有可能取代CRT成为电子信息产品的主要显示器件另
+外液晶显示器对空间电磁辐射的干扰不敏感且在紧凑的仪器空间不需要专
+门的屏蔽保护因而课大大简化仪器的结构和制造成本在各种便携式仪器
+仪表将会越来越广泛的应用。特别是在电池供电的单片机产品中液晶显示更
+是必选的显示器件。 
+通过完成本次的课程设计了解LCD的基本原理从而更加完善的学习计
+算机基础知识。   3 任务 1.使用128×64图形点阵液晶通过8255控制液晶连接实验电路图。 
+2.编写实验程序显示学校、学院、学号、姓名并使该字串上下左右
+滚屏一周 
+3. 了解LCD的基本原理掌握其基本的工作流程。 1.2 设计环境、设备与器材  设备实验箱、唐都科教仪器公司Wmd86联机软件   
+第二章  设计内容和方案 2.1 设计内容 1对系统的各个模块的各个功能进行深入分析和研究在对课题所采用
+的方案进行可行详细的研究后设计具体功能电路。  
+2熟悉所选芯片的功能并完成具体电路设计。  
+3对系统的最终指标进行测试针对系统的不足进行分析并提出一些
+改正方法。 
+4使用128×64图形点阵液晶编写实验程序通过8255控制液晶
+显示学校、学院、学号、姓名并使该字串上下左右滚屏一周。 
+5c语言反汇编为汇编代码。使用VC++进行反汇编人工进行代码整理。   4 2.2 设计方案 1. 按照图3连接实验接线图 
+2. 得到需显示汉字或图形的显示数据这里需要的字模 
+3. 编写实验程序编译、链接无误后装入系统 
+4. 运行实验程序验证程序功能。 
+5.  c语言反汇编为汇编代码。。 第三章  课程设计相关原理简述 
+1. 液晶模块的接口信号及工作时序 
+该图形液晶内置有控制器这使得液晶显示模块的硬件电路简单化它与
+CPU连接的信号线如下 
+CS1、CS2片选信号低电平有效 
+E使能信号 
+RS数据和指令选择信号RS1为RAM数据RS0为指令数据 
+R/W读/写信号R/W1为读操作R/W0为写操作 
+D7D0数据总线 
+LT背景灯控制信号LT1时打开背景灯LT0时关闭背景灯。 
+该液晶的时序参数说明如表1所列读写时序图如图1和图2所示。 
+表1 时序参数说明   5  
+   6  
+2. 显示控制指令 
+显示控制指令控制着液晶控制器的内部状态具体如表2所列。 
+表2显示控制命令列表 
+ 
+显示开/关   7  
+该指令设置显示开/关触发器的状态当D1为显示数据当D0为关闭
+显示设置。 
+设置地址Y地址 
+ 
+该指令用以设置Y地址计数器的内容AC5AC0063代表某一页面上的
+某一单元地址随后的一次读或写数据将在这个单元上进行。Y地址计数器具有
+自动加一功能在每次读或写数据后它将自动加一所以在连续读写数据时Y
+地址计数器不必每次设置一次。 
+设置页X地址 
+ 
+该指令设置页面地址寄存器的内容。显示存储器共分8页指令代码中AC2
+AC0用于确定当前所要选择的页面地址取值范围为07代表第18页。该
+指令指出以后的读写操作将在哪一个页面上进行。 
+显示起始行Z地址 
+ 
+该指令设置了显示起始行寄存器的内容。此液晶共有64行显示的管理能力
+指令中的L5L0为显示起始行的地址取值为063规定了显示屏上最顶一
+行所对应的显示存储器的行地址。若等时间、等间距地修改显示起始行寄存器
+的内容则显示屏将呈现显示内容向上或向下滚动的显示效果。   8 状态读 
+ 
+状态字是CPU了解液晶当前状态的唯一信息渠道。共有3位有效位说明
+如下。 
+忙表示当前液晶接口控制电路运行状态。当忙位为1表示正在处理指令
+或数据此时接口电路被封锁不能接受除读状态字以外的任何操作。当忙位
+为0时表明接口控制电路已准备好等待CPU的访问。 
+开/关表示当前的显示状态。为1表示关显示状态为0表示开显示状态。 
+复位为1表示系统正处于复位状态此时除状态读可被执行外其它指
+令不可执行此位为0表示处于正常工作状态。 
+在指令设置和数据读写时要注意状态字中的忙标志。只有在忙标志为0时
+对液晶的操作才能有效。所以在每次对液晶操作前都要读出状态字判断忙标
+志位若不为0则需要等待直到忙标志为0为止。 
+写显示数据 
+该操作将8位数据写入先前确定的显示存储单元中。操作完成后列地址计
+数器自动加一。 
+读显示数据 
+ 
+该操作将读出显示数据RAM中的数据然后列地址计数器自动加一。 
+    9 第四章  设计实现 
+4.1 系统设计框架结构 
+     
+ 
+ 
+4.2 系统硬件设计 4.2.1按照图3连接实验接线图   10  4.2.2按照图3连接实验接线图  4.3 系统软件设计 4.3.1.程序总框架图   11  4.3.1.LCD显示框架图    12  4.4 遇到的问题及解决 1.全角数字显示问题在网络上寻找到可以提取半角字符的字模提取软
+件从而解决了这个问题。 
+2.按钮控制字幕左右滚动出现乱码还没有解决未知原因。 
+3.c语言反汇编为汇编代码。使用VC++进行反汇编人工进行代码整理。 4.5 需要讨论的其它问题  1.在唐都实验电路板上设置按钮控制字幕左右上下滚动的时候要显示的字
+幕总是乱掉了。   13 第五章  设计验证 
+5.1 验证步骤及结果 (1)编译程序载入实验板 
+(2)拨动按钮进行测试 
+(3)实验效果如下  
+5.2 数据分析 LCD显示器成功显示“ xxxxx”、 “ 计算机学院”、“xxxxx ”、“xxxx ”按钮
+控制左右转动的时候有点乱码。 5.3 结论  实验中显示的部分成功但是按钮控制左右转动的时候程序中的清除函数失效不知道什么原因。 
+   14 第六章  设计总结  这次课程设计做的相当吃力我没想到我的大学专业知识简直白学了
+大家都说硬件对我的主攻软件的学生简直太难了我看真的是我的专业课基础
+知识没有学习好而已大一大二的电路技术基础和计算机组成原理这些课程都
+学的不够扎实所以导致看到电路板就头晕就是我的对专业知识的不吸收
+这次的课程设计我了解一下LCD的基本原理学习了用汇编语言编程控制液
+晶的静态和动态字符显示感觉真的好难最后用来C语言和同学合作才完
+成了显示的部分。这为我今后的学习增加了 动力可以说得是苦多于甜但是
+可以学到很多很多的的东西同时不仅可以巩固了以前所学过的知识而且学
+到了很多在书本上所没有学到过的知识。以前在上课的时候老师经常强调在
+写一个程序的时候一定要事先把程序原理方框图化出来但是我开始总觉得
+这样做没必要很浪费时间。但是这次课程设计完全改变了我以前的那种错
+误的认识以前我接触的那些程序都是很短、很基础的但是在课程设计中碰
+到的那些需要很多代码才能完成的任务画程序方框图是很有必要的。因为通
+过程序方框图在做设计连接实验电路的过程中我们每一步要做什么每一
+步要完成什么任务都有一个很清楚的思路而且在程序测试的过程中也有利于
+查错。 
+通过对这程序的制作使我对汇编语言的基本知识的使用更加熟练同
+时也增加了我对汇编语言的一些认识在作业完成过程中通过和同学的交流
+也增加了合作的技巧。通过查阅以下资料也学到了一些课本上没有的东西拓
+宽了自己的知识面增加了学好汇编语言的信心。    15      这不是第一次用汇编语言来设计一个小程序平时做了很多实验写了很
+多小程序。但这次是一个综合的程序平时的很多程序都用到了。很多子程序
+的设计是固定的因此可以直接从指导资料中调用大多只需要修改几个参数
+就可以这大大方便了我们的设计为我们节省了很多的时间。 
+    在这次课程设计中我真正体会到了合作的重要性遇到很多问题时当
+我看书查资料不能解决时这是去找同学讨论一下收获很大可以使很多问
+题迎刃而解直到问题最终解决。 
+      不可否认本程序存在不少缺点和不足但通过这次课程设计的却找出
+了自己在学习上的不足对以后的工作也有指导作用。我相信在以后的学习中
+会克服这些不足达到熟练掌握汇编语言的目的   16  
+第七章  本课程教学建议 "微机原理与系统设计" 是计算机科学与技术本科生教学的主要基础课
+之一索老师的讲课内容我们无从质疑可能是我们学习到基础知识太少了
+所以老师安排的课程设计题目我们做的的都很吃力。索老师对我们的影响真的
+是太大了告诉了我们好多专业的东西也告诉了我们好多专业人员需要的素
+养。现在流行的就是调节教学调节教学是一种先进的教学思想也是一种新
+观念、新思维、新模式。不能认为是一种教学方法。调节教学的强大生命力就
+在于能使教和学达到自然融洽统一和谐。只有和谐才能发展体现了当前教学
+改革发展的趋势。和谐教学能够沟通愉快教学、成功教学和创造教学取各种
+教学之长。微机原理课程设计这门课的上课方式中我唯一的意见就是上课
+的时候多多增加互动挺好的上课的积极性马上就起来了我建议多多开展
+这样的教学方式。 
+ 
+ 
+ 
+ 
+   17 第八章  参考文献 1杨居义《微机原理与接口技术项目教程》清华大学出版社2013.5第二版 
+2郑晓薇《汇编语言》机械工程出版社2009.9第一版 
+3基于Proteus智能交通灯控制设计与制作豆丁网  http://www.docin.com/ 
+2015-06-30 
+4《电子产品世界》EEPWhttp://www.eepw.com.cn/2015-07-01  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+   18 附件代码清单 1.C语言部分 /******************************************************* 
+ * 文件名: LCD.C 
+ * 功能描述: 液晶控制实验  
+ *******************************************************/ 
+ 
+#include <conio.h> 
+#include "lcd.h" 
+ 
+void delay(int time); 
+ 
+void query(char cmd); 
+void openlight(char cmd); 
+void closelight(char cmd); 
+void clear(char cmd,int x); 
+void write(char cmd,char data); 
+void writehz(char xadd,char yadd,char cmd,char* hz); 
+ 
+int MY8255_A    = 0x0600; 
+int MY8255_B    = 0x0602; 
+int MY8255_C    = 0x0604; 
+int MY8255_MODE = 0x0606; 
+ 
+char cmd1 = 0x04; 
+char cmd2 = 0x08; 
+char data; 
+char xadd;   19 char yadd; 
+ 
+/////////////////////////////////////////////////////////////// 
+void main() 
+{ 
+ int x; 
+ outp(MY8255_MODE, 0x80); 
+ 
+ write(cmd1,0x3f);                    //Display On 打开显示 
+ write(cmd2,0x3f); 
+ 
+ write(cmd1,0xc0);                    //设置起始行 
+ write(cmd2,0xc0); 
+ 
+ for(x=0;x<8;x++)                     //清屏 
+ { 
+  clear(cmd1,x); 
+  clear(cmd2,x); 
+ } 
+          //写汉字 
+ writehz(0xba,0x40,cmd1,tang); 
+ writehz(0xba,0x50,cmd1,du); 
+ writehz(0xba,0x60,cmd1,ke); 
+ writehz(0xba,0x70,cmd1,jiao); 
+ writehz(0xba,0x40,cmd2,yi); 
+ writehz(0xba,0x50,cmd2,qi); 
+  
+ writehz(0xbc,0x40,cmd1,gong); 
+ writehz(0xbc,0x50,cmd1,si);  
+ writehz(0xbc,0x60,cmd1,huan);   20  writehz(0xbc,0x70,cmd1,ying); 
+ writehz(0xbc,0x40,cmd2,nin); 
+  
+ writehz(0xbe,0x40,cmd1,gantan);  
+ writehz(0xbe,0x50,cmd1,bin); 
+  
+ writehz(0xb8,0x40,cmd1,two); 
+ writehz(0xb8,0x50,cmd1,zero);  
+ writehz(0xb8,0x60,cmd1,one); 
+ writehz(0xb8,0x70,cmd1,three);  
+  
+ writehz(0xb8,0x40,cmd2,X); 
+ writehz(0xb8,0x50,cmd2,Y); 
+  
+ delay(50); 
+ 
+ for(x=0xc1;x<=0xFF;x++) 
+ { 
+  write(cmd1,x); 
+  write(cmd2,x); 
+  delay(20); 
+ } 
+ while(1); 
+} 
+////////////////////////////////////////////////////////////// 
+ 
+void write(char cmd,char data)          //写命令或数据子程序 
+{ 
+ outp(MY8255_B, data); 
+ cmd = cmd | 0x10;   21  outp(MY8255_A, cmd); 
+ cmd = cmd & 0xEF; 
+ outp(MY8255_A, cmd); 
+} 
+ 
+void writehz(char xadd,char yadd,char cmd,char* hz) 
+{                                       //写汉字子程序 16*16 
+ int x,y; 
+ 
+ write(cmd,xadd); 
+ query(cmd+1); 
+ 
+ write(cmd,yadd); 
+ query(cmd+1); 
+ 
+ for(x=0;x<2;x++) 
+ { 
+  for(y=0;y<16;y++) 
+  { 
+   data = hz[y+(x*16)]; 
+   write(cmd+2,data); 
+   query(cmd+1); 
+  } 
+ 
+  xadd++; 
+  write(cmd,xadd); 
+  query(cmd+1); 
+ 
+  write(cmd,yadd); 
+  query(cmd+1);   22  } 
+} 
+ 
+void openlight(char cmd)                  //打开背景灯 
+{ 
+ cmd = cmd | 0x20; 
+ outp(MY8255_A, cmd); 
+} 
+ 
+void closelight(char cmd)                 //关闭背景灯 
+{ 
+ cmd = cmd & 0xdf; 
+ outp(MY8255_A, cmd); 
+} 
+ 
+void clear(char cmd,int x)                //清一页屏幕子程序 
+{ 
+ int y; 
+ 
+ xadd = 0xb8+x; 
+ write(cmd,xadd); 
+ query(cmd+1); 
+ 
+ yadd = 0x40; 
+ write(cmd,yadd); 
+ query(cmd+1); 
+ 
+ for(y=0;y<64;y++) 
+ { 
+  data = 0x00;   23   write(cmd+2,data); 
+  query(cmd+1); 
+ } 
+} 
+ 
+void query(char cmd)                      //查询子程序 
+{ 
+ outp(MY8255_MODE, 0x82); 
+ 
+ cmd = cmd | 0x10; 
+ outp(MY8255_A, cmd); 
+ cmd = cmd & 0xEF; 
+ outp(MY8255_A, cmd); 
+ 
+ while( inp(MY8255_B) & 0x80) 
+ { 
+  cmd = cmd | 0x10; 
+  outp(MY8255_A, cmd); 
+  cmd = cmd & 0xEF; 
+  outp(MY8255_A, cmd); 
+ } 
+ 
+ outp(MY8255_MODE, 0x80); 
+} 
+ 
+void delay(int time) 
+{ 
+ int i; 
+ int j; 
+ for(i=0;i<=time;i++)   24  { 
+  for(j=0;j<=0x1000;j++); 
+ } 
+} 
+ /******************************************************* 
+ * 文件名: LCD.H 
+ * 功能描述: 液晶控制实验  
+ *******************************************************/ 
+ 
+/*--  文字:  西  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char tang[] = { 
+0x04,0xC4,0x44,0x44,0x44,0xFC,0x44,0x44,0x44,0xFC,0x44,0x44,0x44,0xE6,0x44,0x00, 
+0x00,0xFF,0x40,0x50,0x48,0x47,0x40,0x40,0x40,0x47,0x48,0x48,0x40,0xFF,0x00,0x00  
+     }; 
+/*--  文字:  北  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char du[] = { 
+0x00,0x20,0x20,0x20,0x20,0xFF,0x00,0x00,0xFF,0x20,0x10,0x08,0x0C,0x00,0x00,0x00, 
+0x20,0x60,0x20,0x10,0x10,0x7F,0x00,0x00,0x3F,0x40,0x40,0x40,0x40,0x40,0x70,0x00 
+     }; 
+/*--  文字: 师  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char ke[] = { 
+0x00,0xFC,0x00,0x00,0xFF,0x00,0x02,0xF2,0x12,0x12,0xFE,0x12,0x12,0xFB,0x12,0x00, 
+0x00,0x8F,0x40,0x30,0x0F,0x00,0x00,0x3F,0x00,0x00,0xFF,0x10,0x20,0x1F,0x00,0x00 
+     }; 
+/*--  文字:  范  --*/   25 /*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char jiao[] = { 
+0x04,0x44,0x94,0x24,0x6F,0x04,0xE4,0x24,0x24,0x24,0x2F,0xF4,0x24,0x06,0x04,0x00, 
+0x04,0x04,0xFD,0x04,0x02,0x00,0x3F,0x40,0x40,0x42,0x44,0x43,0x40,0x40,0x70,0x00 
+     }; 
+/*--  文字:  大  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char yi[] = { 
+0x20,0x20,0x20,0x20,0x20,0x20,0xA0,0x7F,0xA0,0x20,0x20,0x20,0x20,0x30,0x20,0x00, 
+0x00,0x40,0x40,0x20,0x10,0x0C,0x03,0x00,0x01,0x06,0x08,0x10,0x20,0x60,0x20,0x00 
+     }; 
+/*--  文字:  学  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char qi[] = { 
+0x40,0x30,0x11,0x96,0x90,0x90,0x91,0x96,0x90,0x90,0x98,0x14,0x13,0x50,0x30,0x00, 
+0x04,0x04,0x04,0x04,0x04,0x44,0x84,0x7E,0x06,0x05,0x04,0x04,0x04,0x06,0x04,0x00 
+     }; 
+/*--  文字:  计  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char gong[] = { 
+0x40,0x40,0x42,0xCC,0x00,0x40,0x40,0x40,0x40,0xFF,0x40,0x40,0x40,0x60,0x40,0x00, 
+0x00,0x00,0x00,0x7F,0x20,0x10,0x08,0x00,0x00,0xFF,0x00,0x00,0x00,0x00,0x00,0x00 
+     }; 
+/*--  文字:  算  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char si[] = { 
+0x08,0x04,0x03,0xFA,0xAE,0xAA,0xAA,0xAC,0xAB,0xAA,0xAE,0xFA,0x02,0x02,0x00,0x00, 
+0x08,0x08,0x88,0x4B,0x3E,0x0A,0x0A,0x0A,0x0A,0x0A,0xFE,0x0B,0x08,0x0C,0x08,0x00 
+     }; 
+   26 /*--  文字:  机 --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char huan[] = { 
+0x10,0x10,0xD0,0xFF,0x90,0x10,0x00,0xFC,0x04,0x04,0x04,0xFE,0x04,0x00,0x00,0x00, 
+0x04,0x03,0x00,0xFF,0x80,0x41,0x20,0x1F,0x00,0x00,0x00,0x3F,0x40,0x40,0x70,0x00 
+     }; 
+/*--  文字:  学  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char ying[] = { 
+0x40,0x30,0x11,0x96,0x90,0x90,0x91,0x96,0x90,0x90,0x98,0x14,0x13,0x50,0x30,0x00, 
+0x04,0x04,0x04,0x04,0x04,0x44,0x84,0x7E,0x06,0x05,0x04,0x04,0x04,0x06,0x04,0x00 
+     }; 
+/*--  文字:  院  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char nin[] = { 
+0x00,0xFE,0x22,0x5A,0x96,0x0C,0x24,0x24,0x25,0x26,0x24,0x34,0xA4,0x14,0x0C,0x00, 
+0x00,0xFF,0x04,0x08,0x87,0x81,0x41,0x31,0x0F,0x01,0x3F,0x41,0x41,0x41,0x70,0x00 
+      }; 
+/*--  文字:  李  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char gantan[] = { 
+0x80,0x84,0x44,0x44,0x24,0x14,0x04,0xFF,0x04,0x14,0x24,0x24,0x46,0xC4,0x40,0x00, 
+0x00,0x08,0x08,0x08,0x09,0x49,0x89,0x7D,0x0D,0x0B,0x09,0x08,0x0C,0x08,0x00,0x00 
+       }; 
+/*--  文字:  斌 --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char bin[] = { 
+0x10,0x50,0x92,0x14,0xF0,0x10,0x20,0x24,0x24,0xA4,0x24,0xFF,0x20,0x24,0x28,0x00, 
+0x20,0x10,0x0D,0x02,0x05,0x18,0x40,0x7F,0x40,0x3F,0x22,0x07,0x38,0x40,0xE0,0x00 
+       };   27   /*--  文字:  20 --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char two[] = { 
+0x00,0x70,0x08,0x08,0x08,0x88,0x70,0x00,0x00,0xE0,0x10,0x08,0x08,0x10,0xE0,0x00, 
+0x00,0x30,0x28,0x24,0x22,0x21,0x30,0x00,0x00,0x0F,0x10,0x20,0x20,0x10,0x0F,0x00 
+       }; 
+/*--  文字:  13 --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char zero[] = { 
+0x00,0x00,0x20,0x20,0xF0,0x00,0x00,0x00,0x00,0x00,0x60,0x10,0x10,0x10,0x90,0x60, 
+0x00,0x00,0x40,0x40,0x7F,0x40,0x40,0x00,0x00,0x00,0x30,0x40,0x41,0x41,0x42,0x3C 
+       }; 
+/*--  文字:  71 --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char one[] = { 
+0x00,0x70,0x10,0x10,0x10,0xD0,0x30,0x10,0x00,0x00,0x00,0x20,0x20,0xF0,0x00,0x00, 
+0x00,0x00,0x00,0x7C,0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x40,0x7F,0x40,0x40 
+       }; 
+/*--  文字:  02 --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char three[] = { 
+0x00,0xC0,0x20,0x10,0x10,0x10,0x20,0xC0,0x00,0x00,0x00,0x80,0x40,0x20,0xF8,0x00, 
+0x00,0x1F,0x20,0x40,0x40,0x40,0x20,0x1F,0x00,0x00,0x06,0x09,0x48,0x48,0x7F,0x48 
+       }; 
+ 
+ /*--  文字:  01 --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char X[] = { 
+0x00,0xC0,0x20,0x10,0x10,0x10,0x20,0xC0,0x00,0x00,0x00,0x20,0x20,0xF0,0x00,0x00, 
+0x00,0x1F,0x20,0x40,0x40,0x40,0x20,0x1F,0x00,0x00,0x00,0x40,0x40,0x7F,0x40,0x40   28  
+       }; 
+/*--  文字:  12 --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+char Y[] = { 
+0x00,0x00,0x20,0x20,0xF0,0x00,0x00,0x00,0x00,0x00,0xE0,0x10,0x10,0x10,0x10,0xE0, 
+0x00,0x00,0x40,0x40,0x7F,0x40,0x40,0x00,0x00,0x00,0x60,0x50,0x48,0x44,0x43,0x60 
+       }; 
+ 
+2.汇编语言部分 
+ 
+PORTA EQU 0200H ;8255的PA口地址 
+PORTB EQU 0202H ;A1、A2用于端口选择 
+PORTC EQU 0204H ;PC口上面是PB口 
+PCONT EQU 0206H ;8255的控制口地址 
+RESET EQU 11100010B ;LCD复位命令码 
+DISP_ON EQU 10101111B ;LCD显示开命令码 
+DISP_NOR EQU 10100110B ;LCD正常显示命令码 
+DISP_ALL EQU 10100100B ;LCD所有点全部显示命令码 
+LINE0 EQU 01000000B ;行号0开始到63 
+PAGE0 EQU 10110000B ;页号0开始到7 
+COLHIGH EQU 00010000B ;列号高四位 
+COLLOW EQU 00000000B ;列号低四位共16列 
+ 
+ADCA EQU 10100000B ;向左显示命令码 
+DATA SEGMENT ;定义数据段 
+;以下为0到9的字模半角数据上面的汉字是全角的 
+ 
+XI    DB 04H,0C4H,44H,44H,44H,0FCH,44H,44H,44H,0FCH,44H,44H,44H,0E6H,44H,00H, 
+         00H,0FFH,40H,50H,48H,47H,40H,40H,40H,47H,48H,48H,40H,0FFH,00H,00H   29      
+BEI   DB 00H,20H,20H,20H,20H,0FFH,00H,00H,0FFH,20H,10H,08H,0CH,00H,00H,00H, 
+         20H,60H,20H,10H,10H,7FH,00H,00H,3FH,40H,40H,40H,40H,40H,70H,00H 
+ 
+SHI   DB 00H,0FCH,00H,00H,0FFH,00H,02H,0F2H,12H,12H,0FEH,12H,12H,0FBH,12H,00H, 
+         00H,8FH,40H,30H,0FH,00H,00H,3FH,00H,00H,0FFH,10H,20H,1FH,00H,00H 
+ 
+FAN   DB 04H,44H,94H,24H,6FH,04H,0E4H,24H,24H,24H,2FH,0F4H,24H,06H,04H,00H, 
+         04H,04H,0FDH,04H,02H,00H,3FH,40H,40H,42H,44H,43H,40H,40H,70H,00H 
+ 
+DA    DB 20H,20H,20H,20H,20H,20H,0A0H,7FH,0A0H,20H,20H,20H,20H,30H,20H,00H, 
+         00H,40H,40H,20H,10H,0CH,03H,00H,01H,06H,08H,10H,20H,60H,20H,00H 
+ 
+XUE   DB 40H,30H,11H,96H,90H,90H,91H,96H,90H,90H,98H,14H,13H,50H,30H,00H, 
+         04H,04H,04H,04H,04H,44H,84H,7EH,06H,05H,04H,04H,04H,06H,04H,00H 
+ 
+JI    DB 40H,40H,42H,0CCH,00H,40H,40H,40H,40H,0FFH,40H,40H,40H,60H,40H,00H, 
+         00H,00H,00H,7FH,20H,10H,08H,00H,00H,0FFH,00H,00H,00H,00H,00H,00H 
+ 
+SUAN  DB 08H,04H,03H,0FAH,0AEH,0AAH,0AAH,0ACH,0ABH,0AAH,0AEH,0FAH,02H,02H,00H,00H, 
+         08H,08H,88H,4BH,3EH,0AH,0AH,0AH,0AH,0AH,0FEH,0BH,08H,0CH,08H,00H 
+ 
+JIJ   DB 10H,10H,0D0H,0FFH,90H,10H,00H,0FCH,04H,04H,04H,0FEH,04H,00H,00H,00H, 
+         04H,03H,00H,0FFH,80H,41H,20H,1FH,00H,00H,00H,3FH,40H,40H,70H,00H 
+ 
+XUE1   DB 40H,30H,11H,96H,90H,90H,91H,96H,90H,90H,98H,14H,13H,50H,30H,00H, 
+         04H,04H,04H,04H,04H,44H,84H,7EH,06H,05H,04H,04H,04H,06H,04H,00H 
+ 
+YUAN  DB 00H,0FEH,22H,5AH,96H,0CH,24H,24H,25H,26H,24H,34H,0A4H,14H,0CH,00H, 
+          00H,0FFH,04H,08H,87H,81H,41H,31H,0FH,01H,3FH,41H,41H,41H,70H,00H   30  
+LI    DB 80H,84H,44H,44H,24H,14H,04H,0FFH,04H,14H,24H,24H,46H,0C4H,40H,00H, 
+         00H,08H,08H,08H,09H,49H,89H,7DH,0DH,0BH,09H,08H,0CH,08H,00H,00H 
+ 
+BIN   DB 10H,50H,92H,14H,0F0H,10H,20H,24H,24H,0A4H,24H,0FFH,20H,24H,28H,00H, 
+         20H,10H,0DH,02H,05H,18H,40H,7FH,40H,3FH,22H,07H,38H,40H,0E0H,00H 
+ 
+C0 DB 00H,0E0H,10H,08H,08H,10H,0E0H,00H 
+DB 00H,0FH,10H,20H,20H,10H,0FH,00H 
+C1 DB 00H,10H,10H,0F8H,00H,00H,00H,00H 
+DB 00H,20H,20H,3FH,20H,20H,00H,00H 
+C2 DB 00H,70H,08H,08H,08H,88H,70H,00H 
+DB 00H,30H,28H,24H,22H,21H,30H,00H 
+C3 DB 00H,30H,08H,88H,88H,48H,30H,00H 
+DB 00H,18H,20H,20H,20H,11H,0EH,00H 
+C4 DB 00H,00H,0C0H,20H,10H,0F8H,00H,00H 
+DB 00H,07H,04H,24H,24H,3FH,24H,00H 
+C5 DB 00H,0F8H,08H,88H,88H,08H,08H,00H 
+DB 00H,19H,21H,20H,20H,11H,0EH,00H 
+C6 DB 00H,0E0H,10H,88H,88H,18H,00H,00H 
+DB 00H,0FH,11H,20H,20H,11H,0EH,00H 
+C7 DB 00H,38H,08H,08H,0C8H,38H,08H,00H 
+DB 00H,00H,00H,3FH,00H,00H,00H,00H 
+C8 DB 00H,70H,88H,08H,08H,88H,70H,00H 
+DB 00H,1CH,22H,21H,21H,22H,1CH,00H 
+C9 DB 00H,0E0H,10H,08H,08H,10H,0E0H,00H 
+DB 00H,00H,31H,22H,22H,11H,0FH,00H 
+ 
+TEMP DB 32 DUP(0) ;临时字模数据区 
+;X DB 0 ;显示位置的起始行号   31 ;Y DB 0 ;显示位置的起始列号 
+DATA ENDS ;数据段定义结束 
+ 
+STACK SEGMENT STACK ;准备定义堆栈段 
+STP DW 100 DUP(?) ;预先定义的堆栈深度 
+LEN EQU $-STP 
+STACK ENDS ;堆栈段定义结束 
+CODE SEGMENT 'code' ;定义代码段 
+ASSUME CS:CODE,DS:DATA,SS:STACK 
+START: 
+MOV AX,DATA ;初始化数据段 
+MOV DS,AX 
+CALL INIT ;LCD初始化 
+;准备显示福字SI<-字模位置,X->BL,Y->BH 
+;MOV BL,0 
+;MOV BH,0 
+;LEA SI,FU 
+;CALL DISPCHN 
+;准备显示半角数字2,SI<-2的字模区首地址 
+;列号->BL,行号->BH因半角数字与全角汉字字模存储 
+; 空间数不同故用不同的子程序来显示 
+ 
+MOV BL,0 
+MOV BH,0 
+LEA SI,XI 
+CALL DISPCHN 
+MOV BL,1 
+MOV BH,0 
+LEA SI,BEI 
+CALL DISPCHN   32 MOV BL,2 
+MOV BH,0 
+LEA SI,SHI 
+CALL DISPCHN 
+MOV BL,3 
+MOV BH,0 
+LEA SI,FAN 
+CALL DISPCHN 
+MOV BL,4 
+MOV BH,0 
+LEA SI,DA 
+CALL DISPCHN 
+MOV BL,5 
+MOV BH,0 
+LEA SI,XUE 
+CALL DISPCHN 
+ 
+MOV BL,0 
+MOV BH,1 
+LEA SI,JI 
+CALL DISPCHN 
+MOV BL,1 
+MOV BH,1 
+LEA SI,SUAN 
+CALL DISPCHN 
+MOV BL,2 
+MOV BH,1 
+LEA SI,JIJ 
+CALL DISPCHN 
+MOV BL,3   33 MOV BH,1 
+LEA SI,XUE1 
+CALL DISPCHN 
+MOV BL,4 
+MOV BH,1 
+LEA SI,YUAN 
+CALL DISPCHN 
+ 
+MOV BL,0 
+MOV BH,2 
+LEA SI,LI 
+CALL DISPCHN 
+MOV BL,1 
+MOV BH,2 
+LEA SI,BIN 
+CALL DISPCHN 
+ 
+;原来的非半角数字显示 
+;MOV BL,0 
+;MOV BH,3 
+;LEA SI,C2 
+;CALL DISPCHA 
+ 
+MOV BL,0 
+MOV BH,3 
+LEA SI,C2 
+LEA DI,C0 
+LEA BP,TEMP 
+CALL FULLCHA 
+MOV BL,1   34 MOV BH,3 
+LEA SI,C1 
+LEA DI,C3 
+LEA BP,TEMP 
+CALL FULLCHA 
+MOV BL,2 
+MOV BH,3 
+LEA SI,C7 
+LEA DI,C1 
+LEA BP,TEMP 
+CALL FULLCHA 
+MOV BL,3 
+MOV BH,3 
+LEA SI,C0 
+LEA DI,C2 
+LEA BP,TEMP 
+CALL FULLCHA 
+MOV BL,4 
+MOV BH,3 
+LEA SI,C0 
+LEA DI,C1 
+LEA BP,TEMP 
+CALL FULLCHA 
+MOV BL,5 
+MOV BH,3 
+LEA SI,C1 
+LEA DI,C2 
+LEA BP,TEMP 
+CALL FULLCHA 
+   35 ;显示完一个汉字和一个数字在原地循环等待 
+JMP $ 
+INIT PROC NEAR ;LCD与8255初始化子程序 
+MOV AL,10000000B 
+MOV DX,PCONT 
+OUT DX,AL ;INIT 8255 
+MOV AL,00000001B ;INIT LCD 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,RESET ;RESET 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+ 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,DISP_ON ;DISP ON 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+ 
+MOV DX,PORTB 
+OUT DX,AL   36 MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,ADCA ;ADC 
+INC AL 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+ 
+MOV DX,PORTB 
+OUT DX,AL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,DISP_ALL ;DISP ALL 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+ 
+OUT DX,AL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,DISP_NOR ;DISP NOR   37 MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+ 
+RET 
+INIT ENDP 
+;以下为汉字显示子程序 
+DISPCHN PROC NEAR 
+PUSH CX 
+PUSH DX 
+PUSH AX 
+PUSH DI 
+PUSH SI 
+MOV DI,BX 
+MOV CL,4 
+SHL BL,CL 
+ 
+MOV AL,BL 
+AND BL, 0FH 
+MOV CL,4 
+SHR AL,CL 
+ADD AL,COLHIGH 
+ADD BL,COLLOW 
+MOV BH,AL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL   38 NOP 
+MOV AL,BH ;COL HIGH 
+ 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,BL ;COL LOW 
+MOV DX,PORTA 
+ 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+MOV BX,DI 
+MOV BL,BH 
+SHL BL,1 
+ADD BL,PAGE0 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+ 
+NOP   39 MOV AL,BL ;ROW 1 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+MOV CX,16 
+HIGHE: 
+MOV AL,00000011B 
+MOV DX,PORTB 
+ 
+OUT DX,AL 
+DATA1: 
+MOV AL,[SI] 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+NOP 
+INC SI 
+DATAE: 
+MOV AL,00000010B 
+MOV DX,PORTB 
+OUT DX,AL 
+ 
+NOP 
+NOP 
+LOOP HIGHE 
+MOV BX,DI 
+MOV BL,BH   40 SHL BL,1 
+ADD BL,PAGE0 
+INC BL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+ 
+MOV AL,BL ;ROW 2 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+MOV BX,DI 
+MOV CL,4 
+SHL BL,CL 
+MOV AL,BL 
+AND BL,0FH 
+ 
+MOV CL,4 
+SHR AL,CL 
+ADD AL,COLHIGH 
+ADD BL,COLLOW 
+MOV BH,AL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP   41 MOV AL,BH ;COL HIGH 
+MOV DX,PORTA 
+OUT DX,AL 
+ 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,BL ;COL LOW 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+ 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+POP SI 
+ADD SI,16 
+MOV CX,16 
+HIGHE2: 
+MOV AL,00000011B 
+MOV DX,PORTB 
+OUT DX,AL 
+DATA2: 
+MOV AL,[SI] 
+   42 MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+NOP 
+INC SI 
+DATAE2: 
+MOV AL,00000010B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+NOP 
+LOOP HIGHE2 
+ 
+POP DI 
+POP AX 
+POP DX 
+POP CX 
+RET 
+DISPCHN ENDP 
+;以下为显示半角字母、数字的子程序 
+DISPCHA PROC NEAR 
+PUSH CX 
+PUSH DX 
+PUSH AX 
+ 
+PUSH DI 
+PUSH SI 
+MOV DI,BX 
+MOV CL,4 ;4 
+SHL BL,CL   43 MOV AL,BL 
+AND BL,0FH ;0F 
+MOV CL,4 ;4 
+SHR AL,CL 
+ADD AL,COLHIGH 
+ADD BL,COLLOW 
+MOV BH,AL 
+ 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,BH ;COL HIGH 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+MOV AL,00000001B 
+ 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,BL ;COL LOW 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB   44 OUT DX,AL 
+MOV BX,DI 
+MOV BL,BH ;Y 
+ 
+SHL BL,1 
+ADD BL,PAGE0 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,BL ;ROW 1 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+ 
+OUT DX,AL 
+MOV CX,8 
+HIGHEC: 
+MOV AL,00000011B 
+MOV DX,PORTB 
+OUT DX,AL 
+DATA1C: 
+MOV AL,[SI] 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+NOP 
+   45 INC SI 
+DATAEC: 
+MOV AL,00000010B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+NOP 
+LOOP HIGHEC 
+MOV BX,DI 
+MOV BL,BH 
+SHL BL,1 
+ADD BL,PAGE0 
+ 
+INC BL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+MOV AL,BL ;ROW 2 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+ 
+MOV BX,DI 
+MOV CL,4 ;4 
+SHL BL,CL 
+MOV AL,BL   46 AND BL, 0FH ;0F 
+MOV CL,4 ;4 
+SHR AL,CL 
+ADD AL,COLHIGH 
+ADD BL,COLLOW 
+MOV BH,AL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+ 
+OUT DX,AL 
+NOP 
+MOV AL,BH ;COL HIGH 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL 
+MOV AL,00000001B 
+MOV DX,PORTB 
+OUT DX,AL 
+ 
+NOP 
+MOV AL,BL ;COL LOW 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+MOV AL,00000000B 
+MOV DX,PORTB 
+OUT DX,AL   47 POP SI 
+ADD SI,8 
+MOV CX,8 
+HIGHE2C: 
+ 
+MOV AL,00000011B 
+MOV DX,PORTB 
+OUT DX,AL 
+DATA2C: 
+MOV AL,[SI] 
+MOV DX,PORTA 
+OUT DX,AL 
+NOP 
+NOP 
+INC SI 
+DATAE2C: 
+MOV AL,00000010B 
+ 
+MOV DX,PORTB 
+OUT DX,AL 
+NOP 
+NOP 
+LOOP HIGHE2C 
+POP DI 
+POP AX 
+POP DX 
+POP CX 
+RET 
+DISPCHA ENDP 
+   48 ;合并不同半角字符字模的子程序 
+FULLCHA PROC NEAR 
+PUSH SI 
+PUSH DI 
+PUSH CX 
+PUSH BX 
+PUSH AX 
+MOV CX,4 
+MOV BX,BP 
+TLOP1: 
+MOV AX,[SI] 
+MOV [BX],AX 
+INC SI 
+ 
+INC SI 
+INC BX 
+INC BX 
+LOOP TLOP1 
+MOV CX,4 
+TLOP2: 
+MOV AX,[DI] 
+MOV [BX],AX 
+INC DI 
+INC DI 
+INC BX 
+INC BX 
+ 
+LOOP TLOP2 
+MOV CX,4 
+TLOP3:   49 MOV AX,[SI] 
+MOV [BX],AX 
+INC SI 
+INC SI 
+INC BX 
+INC BX 
+LOOP TLOP3 
+MOV CX,4 
+TLOP4: 
+ 
+MOV AX,[DI] 
+MOV [BX],AX 
+INC DI 
+INC DI 
+INC BX 
+INC BX 
+LOOP TLOP4 
+POP AX 
+POP BX 
+POP CX 
+POP DI 
+POP SI 
+MOV SI,BP 
+CALL DISPCHN 
+RET 
+FULLCHA ENDP 
+CODE ENDS 
+END START 

@@ -1,0 +1,403 @@
+Protel 制图 
+ 
+ 
+ Protues原理图 
+ 
+ 
+ 
+程序部分 
+#include<reg51.h> 
+#define uchar unsigned char 
+#define uint unsigned int 
+//sbit databus=P1; 
+#define databus P1 
+//sbit Reset = P3^0;   //复位 
+sbit rs = P3^7;    //指令数据选择 
+sbit e = P3^5;    //指令数据控制 
+sbit cs1 = P3^3;   //左屏幕选择低电平有效 
+sbit cs2 = P3^4;   //右屏幕选择 
+sbit wr = P3^6;    //读写控制 
+//sbit busy = P1^7;   //忙标志 
+void SendCommand(uchar command); //写指令 
+void WriteData(uchar dat);//写数据 
+void LcdDelay(uint time); //延时 
+void SetOnOff(uchar onoff);//开关显示 
+void ClearScreen(uchar screen); //清屏 
+void SetLine(uchar line);  //置页地址 
+void SetColum(uchar colum);//置列地址 
+void SetStartLine(uchar startline);//置显示起始行 
+void SelectScreen(uchar screen);//选择屏幕 
+void Show1616(uchar lin,uchar colum,uchar *address);//显示一个汉字 void InitLcd();    //初始化 
+void ResetLcd();   //复位 
+void Show_english(uchar lin,uchar colum,uchar *address); 
+const uchar code hzk[] = { 
+/*--  文字:  I  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x00,0x08,0x08,0xF8,0x08,0x08,0x00,0x00,0x00,0x20,0x20,0x3F,0x20,0x20,0x00,0x00, 
+ 
+/*--  文字:     --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 
+ 
+/*--  文字:  c  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x00,0x00,0x00,0x80,0x80,0x80,0x00,0x00,0x00,0x0E,0x11,0x20,0x20,0x20,0x11,0x00, 
+ 
+/*--  文字:  a  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x00,0x00,0x80,0x80,0x80,0x80,0x00,0x00,0x00,0x19,0x24,0x22,0x22,0x22,0x3F,0x20, 
+ 
+/*--  文字:  n  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x80,0x80,0x00,0x80,0x80,0x80,0x00,0x00,0x20,0x3F,0x21,0x00,0x00,0x20,0x3F,0x20, 
+ 
+/*--  文字:     --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 
+ 
+/*--  文字:  m  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x00,0x20,0x3F,0x20,0x00,0x3F,0x20,0x00,0x3F, 
+ 
+/*--  文字:  a  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x00,0x00,0x80,0x80,0x80,0x80,0x00,0x00,0x00,0x19,0x24,0x22,0x22,0x22,0x3F,0x20, 
+ 
+/*--  文字:  k  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x08,0xF8,0x00,0x00,0x80,0x80,0x80,0x00,0x20,0x3F,0x24,0x02,0x2D,0x30,0x20,0x00, 
+ 
+/*--  文字:  e  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x00,0x00,0x80,0x80,0x80,0x80,0x00,0x00,0x00,0x1F,0x22,0x22,0x22,0x22,0x13,0x00, 
+ /*--  文字:     --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 
+ 
+/*--  文字:  i  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x00,0x80,0x98,0x98,0x00,0x00,0x00,0x00,0x00,0x20,0x20,0x3F,0x20,0x20,0x00,0x00, 
+ 
+/*--  文字:  t  --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=8x16   --*/ 
+0x00,0x80,0x80,0xE0,0x80,0x80,0x00,0x00,0x00,0x00,0x00,0x1F,0x20,0x20,0x00,0x00, 
+/*--  文字:    --*/ 
+/*--  宋体12;  此字体下对应的点阵为宽x高=16x16   --*/ 
+0x00,0x00,0x00,0xF0,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 
+0x00,0x00,0x00,0x5F,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 
+/*--  文字:  我  --*/ 
+/*--  楷体_GB231212;  此字体下对应的点阵为宽x高=16x16   --*/ 
+0x00,0x00,0x80,0x90,0xF0,0x48,0x40,0x7F,0xC0,0x20,0x24,0xA8,0x00,0x00,0x00,0x00, 
+0x08,0x08,0x04,0x14,0x3F,0x02,0x09,0x08,0x05,0x06,0x09,0x10,0x20,0x78,0x00,0x00, 
+ 
+/*--  文字:  的  --*/ 
+/*--  楷体_GB231212;  此字体下对应的点阵为宽x高=16x16   --*/ 
+0x00,0xC0,0x60,0x50,0x2C,0xE0,0x80,0x40,0xA0,0x38,0x26,0x10,0xF0,0x00,0x00,0x00, 
+0x00,0x07,0x19,0x09,0x08,0x1F,0x00,0x00,0x00,0x03,0x10,0x20,0x1F,0x00,0x00,0x00, 
+ 
+/*--  文字:  未  --*/ 
+/*--  楷体_GB231212;  此字体下对应的点阵为宽x高=16x16   --*/ 
+0x00,0x00,0x80,0x80,0x90,0x90,0xFF,0xC8,0x48,0x48,0x40,0x40,0x00,0x00,0x00,0x00, 
+0x10,0x10,0x08,0x04,0x02,0x01,0x7F,0x00,0x01,0x02,0x04,0x08,0x18,0x10,0x10,0x00, 
+ 
+/*--  文字:  来  --*/ 
+/*--  楷体_GB231212;  此字体下对应的点阵为宽x高=16x16   --*/ 
+0x00,0x80,0x80,0xA8,0xC8,0x88,0xFF,0x84,0x64,0x54,0x40,0x40,0x00,0x00,0x00,0x00, 
+0x00,0x10,0x10,0x08,0x04,0x02,0x7F,0x01,0x02,0x04,0x0C,0x08,0x08,0x08,0x08,0x00, 
+ 
+/*--  文字:  不  --*/ 
+/*--  楷体_GB231212;  此字体下对应的点阵为宽x高=16x16   --*/ 
+0x00,0x00,0x08,0x08,0x08,0x88,0x48,0xE4,0x14,0x8C,0x84,0x04,0x04,0x04,0x00,0x00, 
+0x00,0x04,0x04,0x02,0x01,0x00,0x00,0x3F,0x00,0x00,0x00,0x01,0x03,0x06,0x00,0x00, 
+ 
+/*--  文字:  是  --*/ 
+/*--  楷体_GB231212;  此字体下对应的点阵为宽x高=16x16   --*/ 
+0x00,0x00,0x80,0x80,0x82,0x9E,0xAA,0xAA,0xA1,0x5D,0x43,0x40,0x00,0x00,0x00,0x00, 
+0x20,0x20,0x10,0x08,0x06,0x04,0x08,0x1F,0x12,0x22,0x22,0x20,0x20,0x20,0x20,0x00,  
+/*--  文字:  梦  --*/ 
+/*--  楷体_GB231212;  此字体下对应的点阵为宽x高=16x16   --*/ 
+0x00,0x90,0x50,0x30,0xFE,0x28,0x48,0x28,0x18,0xFF,0x14,0x24,0x24,0x40,0x40,0x00, 
+0x00,0x00,0x40,0x48,0x44,0x26,0x2B,0x12,0x0A,0x06,0x00,0x00,0x00,0x00,0x00,0x00, 
+ 
+/*--  文字:    --*/ 
+/*--  楷体_GB231212;  此字体下对应的点阵为宽x高=16x16   --*/ 
+0x00,0x00,0x00,0xFC,0xFC,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 
+0x00,0x00,0x00,0x19,0x19,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 
+}; 
+void main() 
+{ 
+ uchar i,line,colum/*,j */; 
+ uchar *address ; 
+ InitLcd();  
+while(1) 
+{ 
+/*显示第一行*/ 
+/********************************** 
+下面这段程序用来卷页 
+**********************************/ 
+/* line=0; 
+   for(j=0;j<4;j++) 
+   { 
+    ClearScreen(2);//清屏 
+    line=line+1; 
+ colum=0; 
+ address=hzk; 
+ SetOnOff(1); 
+ for(i=0;i<14;i++) 
+ { 
+ if(i<8) 
+ { 
+ SelectScreen(0); 
+ Show_english(line,colum,address);  
+  address+=16; 
+  colum+=8;  
+ }  
+ else if(i>=8) 
+ { 
+  if(i<13) 
+  { 
+  SelectScreen(1);   Show_english(line,colum,address); 
+  address+=16; 
+  colum+=8;    
+  } 
+  else 
+  { 
+  Show1616(line,colum,address); 
+  address+=32; 
+  colum+=16;    
+  } 
+   
+ } 
+ } 
+ for(i = 0;i < 50;i ++)  //延时 
+   LcdDelay(3000); 
+   }   */ 
+ line=1;  //开始从第2页第9行开始显示 
+ colum=0; //开始从第一列开始显示 
+ address=hzk;//给地址指针赋初值 
+ SetOnOff(1);//显示开注意如果这里设置显示关显示会出现错误 
+ for(i=0;i<14;i++)//设置要显示的字符个数 
+ { 
+ if(i<8)   //i<8时在左半屏显示因为每半屏最多只能显示8个英文字符即4
+个汉字 
+ { 
+  SelectScreen(0); //选择左屏 
+  Show_english(line,colum,address);//显示一个英文字符  
+  address+=16;  //每个英文字符需要16个十六进制数表示 
+  colum+=8;   //每个英文字符占8列 
+ }  
+ else if(i>=8)  //当i>8时当然最多只能是16在右屏显示 
+ { 
+  if(i<13) //本程序第一行前13个字符为英文字符最后一个字符为中文字符英
+文字符和中文字符必须分开显示 
+  { 
+  SelectScreen(1); 
+  Show_english(line,colum,address); 
+  address+=16; 
+  colum+=8;    
+  } 
+  else    //显示中文字符“” 
+  { 
+  Show1616(line,colum,address);//显示一个汉字 
+  address+=32;  //每个汉字要用32个16进制表示   colum+=16; //每个汉字占16列   
+  } 
+ } 
+ }   
+ /*显示第二行*/ 
+ /****显示原理与第一行完全相同这里不再赘述了****/ 
+ line=4; 
+ colum=1; 
+ SetOnOff(1); 
+ for(i=0;i<8;i++) 
+ { 
+ if(i<4) 
+ { 
+ SelectScreen(0); 
+ Show1616(line,colum,address);  
+ address+=32; 
+ colum+=16;  
+ }  
+ else 
+ { 
+ SelectScreen(1); 
+ Show1616(line,colum,address);  
+ address+=32; 
+ colum+=16;   
+ } 
+ } 
+ SetOnOff(1); 
+ for(i = 0;i < 50;i ++)  //延时 
+   LcdDelay(30000); 
+   if(colum>63) 
+   colum=0;   
+} 
+} 
+/********************************** 
+延时函数 
+**********************************/ 
+void LcdDelay(uint time) 
+{ 
+ while(time--); 
+} 
+/********************************** 
+写指令 
+**********************************/ 
+void SendCommand(uchar command) { 
+ e=1; 
+ wr=0; 
+ rs=0; 
+ databus=command; 
+ e=0; 
+} 
+/********************************** 
+写数据 
+**********************************/ 
+void WriteData(uchar dat) 
+{ 
+ e=1; 
+ wr=0; 
+ rs=1; 
+ databus=dat; 
+ e=0; 
+} 
+/********************************** 
+显示开/关 
+**********************************/ 
+void SetOnOff(uchar onoff) 
+{ 
+ if(onoff==1) 
+ { 
+  SendCommand(0x3f);  
+ }  
+ else 
+ { 
+  SendCommand(0x3e); 
+ } 
+} 
+/********************************** 
+选择页 
+**********************************/ 
+void SetLine(uchar line) //12864总共有8页0~7每页有8行 
+{ 
+ line=line&0x07;   //只取后三位xxxx x111  这3个是要改变位置的数据 
+ line=line|0xb8;   //页设置的固定格式 
+ SendCommand(line); 
+} 
+/********************************** 
+选择列 
+**********************************/ void SetColum(uchar colum) //12864每半屏有64列0~63分为左右2屏 
+{ 
+ colum=colum&0x3f;  //xx11 1111,这个是要改变Y位置的数据 
+ colum=colum|0x40;  //固定格式 
+ SendCommand(colum); 
+} 
+/********************************** 
+选择起始行 
+**********************************/ 
+void SetStartLine(uchar startline) 
+{ 
+ startline=startline&0x3f;//xx11 1111,这个是要改变x位置的数据 
+ startline=startline|0xc0;//11xxxxxx是起始行设置的固定指令 
+ SendCommand(startline); 
+} 
+/********************************** 
+选择左右屏0左屏1右屏2全屏 
+**********************************/ 
+void SelectScreen(uchar screen) 
+{ 
+ switch(screen) 
+ { 
+  case 0: 
+    cs1=0; 
+    LcdDelay(2); 
+    cs2=1; 
+    LcdDelay(2); 
+    break; 
+  case 1: 
+    cs1=1; 
+    LcdDelay(2); 
+    cs2=0; 
+    LcdDelay(2); 
+    break; 
+  case 2: 
+    cs1=0; 
+    LcdDelay(2); 
+    cs2=0; 
+    LcdDelay(2); 
+    break; 
+ } 
+}  
+/********************************** 
+显示一个汉字 **********************************/ 
+void Show1616(uchar lin,uchar colum,uchar *address) 
+{ 
+ uchar i; 
+ SetLine(lin); 
+ SetColum(colum); 
+ for(i=0;i<16;i++) 
+ { 
+  WriteData(*address); 
+  address++;  
+ } 
+ SetLine(lin+1); 
+ SetColum(colum); 
+ for(i=0;i<16;i++) 
+ { 
+  WriteData(*address); 
+  address++;  
+ } 
+} 
+/********************************** 
+显示一个英文字符 
+**********************************/ 
+void Show_english(uchar lin,uchar colum,uchar *address) 
+{ 
+ uchar i; 
+ SetLine(lin); 
+ SetColum(colum); 
+ for(i=0;i<8;i++) 
+ { 
+  WriteData(*address); 
+  address++;  
+ } 
+ SetLine(lin+1); 
+ SetColum(colum); 
+ for(i=0;i<8;i++) 
+ { 
+  WriteData(*address); 
+  address++;  
+ } 
+} 
+/********************************** 
+清屏 
+**********************************/  
+void ClearScreen(uchar screen) { 
+ uchar i,j; 
+ SelectScreen(screen); 
+ for(i=0;i<8;i++) 
+ { 
+  SetLine(i); 
+  SetColum(0); 
+  for(j=0;j<64;j++) 
+  { 
+   WriteData(0);    
+  } 
+ } 
+} 
+/********************************** 
+12864初始化 
+**********************************/ 
+void InitLcd() 
+{ 
+// ResetLcd(); 
+ SetOnOff(0);//显示关 
+ ClearScreen(2);//清屏 
+ SetLine(0);//页设置 
+ SetColum(0);//列设置 
+ SetStartLine(0);//设置起始页 
+ SetOnOff(1);//显示开 
+} 
+ 
+ 
+ 
+仿真实图 
