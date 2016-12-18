@@ -1,0 +1,22 @@
+软件定时的例子:编写一个软件定时程序,要求定时20ms. 
+假设:8086的时钟=8MHz, 一个时钟周期T=1/8MHz=0.125us 延时20ms,
+执行PUSHF,POPF指令: 需要循环次数：N=20000/[(12+14+17)*0.125] =37209 
+参考程序：
+MOV CX,37209 
+PUSHF                    ;时钟数:14T 
+POPF                     ;时钟数:12T 
+LOOP                     ;时钟数:17/5T 
+写成子程序： 
+DELAY:  
+PUSH       CX                   
+MOV       CX, 37209            
+L:  
+PUSHF                  
+POPF                 
+LOOP  L                  
+POP     CX    
+RET   
+误差修正:(15+12+19)*0.125=5.75ms  
+PUSH    CX    ;15T 
+POP     CX    ;12T 
+RET           ;时钟数:19T
